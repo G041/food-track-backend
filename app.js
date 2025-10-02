@@ -1,12 +1,5 @@
-//desconozco que hay que hacer con express por ahora
-    
-    
-import { PrismaClient } from '@prisma/client/edge';
-import { withAccelerate } from '@prisma/extension-accelerate';
+import express from 'express';
 
-const prisma = new PrismaClient().$extends(withAccelerate())
-
-const express = require('express');
 const app = express();
 const port = 3000;
 
