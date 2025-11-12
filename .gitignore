@@ -42,3 +42,6 @@ app-vieja-terrado
 # generated native folders
 /ios
 /android
+
+# html file used for independent backend testing
+test.html

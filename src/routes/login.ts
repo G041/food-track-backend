@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
 
     const validPassword = await bcrypt.compare(password, user.password);
     if ( !validPassword ) {
-      return res.status(401).json({ error: 'Incorrect password for this user.'})
+      return res.status(401).json({ error: 'Incorrect password.'})
     } 
 
     // Genero JWT

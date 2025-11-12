@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import prisma from '../prisma';
+import { AuthRequest, requireAuth } from '../middleware/auth';
 
 const router = Router();
 
@@ -30,7 +31,7 @@ router.get('/', async (_req, res) => {
  * POST /restaurants → crea uno (ahora acepta latitude/longitude)
  * body: { restaurant_name, description, menu_link, location?, latitude?, longitude? }
  */
-router.post('/', async (req, res) => {
+router.post('/', requireAuth, async (req: AuthRequest, res) => {
   try {
     const {
       restaurant_name,
@@ -40,6 +41,8 @@ router.post('/', async (req, res) => {
       latitude,
       longitude,
     } = req.body;
+
+    if ( !req.id_user ) return res.status(401).json({ error: 'Unauthorized' });
 
     // Validaciones básicas
     if (!restaurant_name || typeof restaurant_name !== 'string') {

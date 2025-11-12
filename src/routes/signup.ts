@@ -19,6 +19,8 @@ router.post('/', async (req, res) => {
   
   const { emailAddress, username, password } = req.body;
   try {
+    
+    const normalisedEmail = emailAddress.toLowerCase();
     const userByName = await prisma.user.findFirst({
       where: {
           name: username
@@ -26,25 +28,25 @@ router.post('/', async (req, res) => {
     })
 
     const userByEmail = await prisma.user.findFirst({
-        where: {
-            email: emailAddress
-        },
+      where: {
+          email: normalisedEmail
+      },
     })
 
-    if (userByName) {
-        return res.status(404).json({ error: 'Username already taken' })
-    }
-
-    if (userByEmail) {
-        return res.status(404).json({ error: 'Email already registered' })
-    }
-
-    if ( !emailAddress.includes('@') ) {
-        return res.status(404).json({ error: 'Email address is not valid' })
+    if ( !normalisedEmail.includes('@') || normalisedEmail.endsWith('@') ) {
+      return res.status(404).json({ error: 'Email address is not valid' })
     }
 
     if ( username.length > 15 || username.length < 4 ) {
-        return res.status(404).json({ error: 'Username length is invalid' })
+      return res.status(404).json({ error: 'Username length is invalid' })
+    }
+
+    if (userByEmail) {
+      return res.status(404).json({ error: 'Email already registered' })
+    }
+
+    if (userByName) {
+      return res.status(404).json({ error: 'Username already taken' })
     }
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
@@ -52,7 +54,7 @@ router.post('/', async (req, res) => {
     const newUser = await prisma.user.create({
       data: {
         name: username,
-        email: emailAddress,
+        email: normalisedEmail,
         password: hashedPassword,
       },
     });
