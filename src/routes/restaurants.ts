@@ -54,25 +54,19 @@ router.post('/', async (req, res) => {
     if (location && typeof location !== 'string') {
       return res.status(400).json({ error: 'location must be a string' });
     }
-
-    // latitude/longitude opcionales, pero si vienen deben ser válidos
-    let lat: number | null = null;
-    let lng: number | null = null;
-
-    if (latitude !== undefined && latitude !== null) {
-      const n = Number(latitude);
-      if (!Number.isFinite(n) || n < -90 || n > 90) {
-        return res.status(400).json({ error: 'latitude must be a number in [-90, 90]' });
-      }
-      lat = n;
+    if ( latitude == null || longitude == null ) {
+      return res.status(400).json({ error: 'latitude/longitude must be defined' });
     }
 
-    if (longitude !== undefined && longitude !== null) {
-      const n = Number(longitude);
-      if (!Number.isFinite(n) || n < -180 || n > 180) {
-        return res.status(400).json({ error: 'longitude must be a number in [-180, 180]' });
-      }
-      lng = n;
+    // Parse and validate as numbers
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+
+    if (!Number.isFinite(lat) || lat < -90 || lat > 90) {
+      return res.status(400).json({ error: 'latitude must be a number in [-90, 90]' });
+    }
+    if (!Number.isFinite(lng) || lng < -180 || lng > 180) {
+      return res.status(400).json({ error: 'longitude must be a number in [-180, 180]' });
     }
 
     const newRestaurant = await prisma.restaurant.create({

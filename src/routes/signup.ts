@@ -49,11 +49,31 @@ router.post('/', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
+    const newUser = await prisma.user.create({
+      data: {
+        name: username,
+        email: emailAddress,
+        password: hashedPassword,
+      },
+    });
     
+    // Genero JWT
+    const token = jwt.sign(
+      { userId: newUser.id_user },         // payload
+      JWT_SECRET,                  // secret
+      { expiresIn: JWT_EXPIRES }   // options (NOT the 2nd arg)
+    )
+
+    res.status(201).json({
+      message: "User registered successfully",
+      accessToken: token,
+      expiresIn: JWT_EXPIRES, // minutes
+      user: { id: newUser.id_user, username: newUser.name }
+    });
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Error trying to log in', details: err });
+    res.status(500).json({ error: 'Error trying to sign up', details: err });
   }
 });
 

@@ -28,7 +28,7 @@ model Restaurant {
   menu_link           String   
   location            String
   latitude            Float
-  longitude           Float 
+  longitude           Float
   @@index([latitude, longitude])
 
   //latitude y longitude estaban con ? en una primera migrate del schema, lo saque y no volvi a hacer migrate, podria llegar a causar algun inconveniente ? lo veremos mas adelante -G
