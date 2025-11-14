@@ -18,7 +18,7 @@ export function requireAuth(req: AuthRequest, res: Response, next: NextFunction)
   const token = auth.slice(7);
   try {
     const payload = jwt.verify(token, JWT_SECRET) as any;
-    // depends on your token payload (you used { userId: user.id_user })
+    // depends on token payload ({ userId: user.id_user })
     req.id_user = payload.userId;
     return next();
   } catch (err) {
