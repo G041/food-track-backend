@@ -99,6 +99,27 @@ router.post('/', requireAuth, async (req: AuthRequest, res) => {
   }
 });
 
+// Remove entries
+router.post('/delete', requireAuth, async (req: AuthRequest, res) => {
+  try {
+    const {
+      id_restaurant,
+    } = req.body;
+
+    if ( !req.id_user ) return res.status(401).json({ error: 'Unauthorized' });
+
+    const deleted = await prisma.restaurant.delete({
+      where: { id_restaurant: id_restaurant.toString() },
+    });
+
+    res.status(201).json(deleted);
+    
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'Error deleting restaurant', details: (err as Error).message });
+  }
+});
+
 /**
  * (OPCIONAL) GET /restaurants/near?lat=-34.47&lng=-58.51&radius=2000
  * Bounding box rápido + podés afinar con Haversine del lado del server si querés
