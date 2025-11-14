@@ -106,10 +106,10 @@ router.post('/delete', requireAuth, async (req: AuthRequest, res) => {
       id_restaurant,
     } = req.body;
 
-    if ( !req.id_user ) return res.status(401).json({ error: 'Unauthorized' });
+    if ( !req.id_user || req.id_user !== 4 ) return res.status(401).json({ error: 'Unauthorized' });
 
     const deleted = await prisma.restaurant.delete({
-      where: { id_restaurant: id_restaurant.toString() },
+      where: { id_restaurant: id_restaurant },
     });
 
     res.status(201).json(deleted);
